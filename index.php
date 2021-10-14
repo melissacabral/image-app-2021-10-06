@@ -1,19 +1,8 @@
-<?php require('CONFIG.php'); ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta charset="utf-8">
-	<title>Image Sharing App</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css" integrity="sha512-xiunq9hpKsIcz42zt0o2vCo34xV0j6Ny8hgEylN3XBglZDtTZ2nwnqF/Z/TTCc18sGdvCjbFInNd++6q3J0N6g==" crossorigin="anonymous" />
-
-	<link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-<div class="site">
-	<header class="header">
-		<h1>Image Sharing App</h1>
-	</header>
+<?php 
+require('CONFIG.php'); 
+require_once('includes/functions.php');
+require('includes/header.php');
+?>
 	<main class="content">
 		<?php 
 		//1. Write it. get all published posts, newest first
@@ -32,7 +21,7 @@
 			<img src="<?php echo $row['image']; ?>">
 			<h2><?php echo $row['title']; ?></h2>
 			<p><?php echo $row['body']; ?></p>
-			<span class="date"><?php echo $row['date']; ?></span>
+			<span class="date"><?php echo time_ago( $row['date'] ); ?></span>
 		</div>		
 
 		<?php 
@@ -47,8 +36,7 @@
 		<?php }//end if posts found ?>
 
 	</main>
-	<aside class="sidebar"></aside>
-	<footer class="footer"></footer>
-</div>
-</body>
-</html>
+<?php 
+require('includes/sidebar.php'); 
+require('includes/footer.php');
+?>	
