@@ -16,7 +16,7 @@
 			<ul>
 				<?php while( $row = $result->fetch() ){ ?>
 					<li class="user">
-						<img src="<?php echo $row['profile_pic']; ?>" width="50" height="50">
+						<?php show_profile_pic( $row['profile_pic'], 40 ); ?>
 						<?php echo $row['username']; ?>
 					</li>
 				<?php } ?>
@@ -27,9 +27,10 @@
 
 	<?php 
 	//get up to 20 categories in alpabetical order by name 
-	$result = $DB->prepare('SELECT name
-							FROM categories
-							ORDER BY name ASC
+	$result = $DB->prepare('SELECT categories.name, COUNT(*) AS total
+							FROM posts, categories
+							WHERE categories.category_id = posts.category_id
+							GROUP BY posts.category_id
 							LIMIT 20');
 	//run it
 	$result->execute();
@@ -41,7 +42,7 @@
 			<ul>
 				<?php while( $row = $result->fetch() ){ ?>
 
-					<li><?php echo $row['name']; ?> - X Posts</li>
+					<li><?php echo $row['name']; ?> - <?php echo $row['total']; ?> Posts</li>
 
 				<?php } ?>
 			</ul>

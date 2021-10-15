@@ -11,5 +11,9 @@
 <body>
 <div class="site">
 	<header class="header">
-		<h1>Image Sharing App</h1>
+		<h1>
+			<a href="<?php echo SITEROOT; ?>">
+				Image Sharing App
+			</a>
+		</h1>
 	</header>

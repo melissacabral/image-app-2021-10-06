@@ -1,4 +1,5 @@
 	<footer class="footer"></footer>
-</div>
+</div><!-- end .site -->
+<?php include('includes/debug-output.php'); ?>
 </body>
 </html>
