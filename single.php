@@ -15,6 +15,7 @@ if( isset($_GET['post_id']) ){
 	$post_id = 0;
 }
 
+require('includes/comment-parse.php');
 ?>
 	<main class="content">
 		<?php 
@@ -50,10 +51,13 @@ if( isset($_GET['post_id']) ){
 			<span class="date"><?php echo time_ago( $row['date'] ); ?></span>
 
 			<span class="comment-count"><?php count_comments( $row['post_id'] ); ?></span>
-		</div>		
+		</div>	
+
+		<?php require('includes/comments.php'); ?>
+		<?php require('includes/comment-form.php'); ?>
 
 		<?php 
-			} //end while loop
+			} //end post while loop
 		}else{ ?>
 		
 		<div class="feedback">
