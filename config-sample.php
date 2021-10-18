@@ -9,6 +9,7 @@
 
 
 define('DEBUG_MODE', true);
+define('SITEROOT', 'http://localhost/');
 
 
 $host = '';
