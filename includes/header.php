@@ -16,4 +16,12 @@
 				Image Sharing App
 			</a>
 		</h1>
+
+		<nav class="main-navigation">
+			<form class="searchform" action="search.php" method="get">
+				<input type="search" name="phrase">
+				<input type="submit" value="search">
+				<input type="hidden" name="page" value="1">
+			</form>
+		</nav>
 	</header>

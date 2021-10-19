@@ -3,8 +3,6 @@ TODO
 
 
 
-
-
 DONE
 ----
 * Set up github repo
@@ -19,3 +17,8 @@ DONE
 * add the debug output
 * add the "single" page template
 * add a "default" profile picture for users with a null image
+* Add the comments list to the single.php template
+* create and parse the "add comment" form
+* build the search form
+* build search.php for the results 
+* paginate it
