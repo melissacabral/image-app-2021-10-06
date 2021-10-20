@@ -23,5 +23,10 @@
 				<input type="submit" value="search">
 				<input type="hidden" name="page" value="1">
 			</form>
+
+			<ul class="menu">
+				<li><a href="register.php">Sign up</a></li>
+				<li><a href="login.php">Log In</a></li>
+			</ul>
 		</nav>
 	</header>

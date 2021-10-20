@@ -1,6 +1,8 @@
 TODO
 ----
 
+* Add Login and parse
+* Add login aurthentication to certain features (commenting, new post etc)
 
 
 DONE
@@ -22,3 +24,4 @@ DONE
 * build the search form
 * build search.php for the results 
 * paginate it
+* Add Register form and parse new user accounts

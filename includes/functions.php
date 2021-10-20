@@ -86,4 +86,40 @@ function show_feedback( &$message = '', &$class = 'error', &$bullets = array() )
     } //end if message is set
 }
 
+/**
+* displays sql query information including the computed parameters.
+* Silent unless DEBUG MODE is set to 1 in config.php
+* @param [statement handler] $sth -  any PDO statement handler that needs troubleshooting
+*/
+function debug_statement($sth){
+    if( DEBUG_MODE ){
+        echo '<pre>';
+        $info = debug_backtrace();
+        echo '<b>Debugger ran from ' . $info[0]['file'] . ' on line ' . $info[0]['line'] . '</b><br><br>';
+        $sth->debugDumpParams();
+        echo '</pre>';
+    }
+}
+/*
+display a variable if it exists (prevents warnings)
+ */
+function echo_if_exists( &$var ){
+    if( isset( $var ) ){
+        echo $var;
+    }
+}
+
+/* make checkboxes "stick" */
+function checked( &$thing1, $thing2 ){
+    if( $thing1 == $thing2 ){
+        echo 'checked';
+    }
+}
+
+/* make select dropdowns "stick" */
+function selected( &$thing1, $thing2 ){
+    if( $thing1 == $thing2 ){
+        echo 'selected';
+    }
+}
 //no close php
