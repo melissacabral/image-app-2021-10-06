@@ -1,3 +1,6 @@
+<?php 
+$logged_in_user = check_login(); 
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,7 +11,7 @@
 
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
-<body>
+<body class="<?php echo_if_exists( $body_class ); ?>">
 <div class="site">
 	<header class="header">
 		<h1>
@@ -25,8 +28,16 @@
 			</form>
 
 			<ul class="menu">
+			<?php if( ! $logged_in_user ){ ?>
+				<!-- logged out menu -->
 				<li><a href="register.php">Sign up</a></li>
 				<li><a href="login.php">Log In</a></li>
+			<?php }else{ ?>
+				<!-- logged in menu -->
+				<li><a href="#">Add New Post</a></li>
+				<li><a href="#"><?php echo $logged_in_user['username']; ?>'s Account</a></li>
+				<li><a href="login.php?action=logout">Log Out</a></li>
+			<?php } ?>
 			</ul>
 		</nav>
 	</header>
