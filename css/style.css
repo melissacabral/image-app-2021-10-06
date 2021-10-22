@@ -286,6 +286,9 @@ h3{
 /* 
 == Milligram recolor 
 */
+code{
+	letter-spacing: normal !important;
+}
 a{
 	color:var(--link-color);
 }
@@ -338,6 +341,11 @@ Breakpoints: check for browsers that support grid
 		"sidebar" 
 		"footer";
 	}
+	.wide-content .site{
+		grid-template-areas: 	"header" 
+		"content" 
+		"footer";
+	}
 	.header {
 		grid-area: header;
 	}
@@ -386,6 +394,12 @@ Breakpoints: check for browsers that support grid
 			grid-template-areas: "header  header"
 			"content  sidebar"
 			"content  sidebar"
+			"footer footer";
+		}
+		.wide-content .site{
+			grid-template-areas: "header  header"
+			"content  content"
+			"sidebar  sidebar"
 			"footer footer";
 		}
 		.main-navigation{
