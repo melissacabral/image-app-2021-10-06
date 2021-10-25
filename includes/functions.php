@@ -44,18 +44,18 @@ function count_comments( $id = 0 ){
     global $DB;
     //write the query
     $result = $DB->prepare('SELECT COUNT(*) AS total
-                            FROM comments
-                            WHERE post_id = ?');
+        FROM comments
+        WHERE post_id = ?');
     //run it - bind the data to the placeholders
     $result->execute( array( $id ) );
     //check it
     if( $result->rowCount() >= 1 ){
          //loop it
-         while( $row = $result->fetch() ){
+       while( $row = $result->fetch() ){
              //return the count
-             echo $row['total'];
-         }       
-    }   
+           echo $row['total'];
+       }       
+   }   
 } //end function
 
 //display the user's profile pic with a default fallback
@@ -70,19 +70,19 @@ function show_profile_pic( $profile_pic, $size = 50 ){
 //display any form's feedback
 function show_feedback( &$message = '', &$class = 'error', &$bullets = array() ){
     if( isset( $message ) ){
-    ?>
-    <div class="feedback <?php echo $class; ?>">
-        <h2><?php echo $message; ?></h2>
-        <?php if( !empty( $bullets ) ){ ?>
-        <ul>
-            <?php 
-            foreach( $bullets AS $bullet ){
-                echo "<li>$bullet</li>";
-            } ?>
-        </ul>
-        <?php } ?>
-    </div>
-    <?php 
+        ?>
+        <div class="feedback <?php echo $class; ?>">
+            <h2><?php echo $message; ?></h2>
+            <?php if( !empty( $bullets ) ){ ?>
+                <ul>
+                    <?php 
+                    foreach( $bullets AS $bullet ){
+                        echo "<li>$bullet</li>";
+                    } ?>
+                </ul>
+            <?php } ?>
+        </div>
+        <?php 
     } //end if message is set
 }
 
@@ -137,30 +137,112 @@ function check_login(){
     }
 
    //if the session is valid, check their credentials
-   if( isset($_SESSION['access_token']) AND isset($_SESSION['user_id']) ){
+    if( isset($_SESSION['access_token']) AND isset($_SESSION['user_id']) ){
         //check to see if these keys match the DB     
 
-       $data = array(
+     $data = array(
         'id' => $_SESSION['user_id'],
         'access_token' =>$_SESSION['access_token'],
-       );
+    );
 
-        $result = $DB->prepare(
-            "SELECT * FROM users
-                WHERE user_id = :id
-                AND access_token = :access_token
-                LIMIT 1");
-        $result->execute( $data );
-       
-        if($result){
+     $result = $DB->prepare(
+        "SELECT * FROM users
+        WHERE user_id = :id
+        AND access_token = :access_token
+        LIMIT 1");
+     $result->execute( $data );
+
+     if($result){
             //success! return all the info about the logged in user
-            return $result->fetch();
-        }else{
-            return false;
-        }
+        return $result->fetch();
     }else{
-        //not logged in
         return false;
     }
+}else{
+        //not logged in
+    return false;
+}
+}
+/*Make a default avatar from the user's first initial*/
+function make_letter_avatar($string, $size){
+//random pastel color
+    $H =   mt_rand(0, 360);
+    $S =   mt_rand(25, 50);
+    $B =   mt_rand(90, 96);
+
+    $RGB = get_RGB($H, $S, $B);
+
+    $imageFilePath = 'avatars/' . $string . '_' .  $H . '_' . $S . '_' . $B . '.png';
+
+    //base avatar image that we use to center our text string on top of it.
+    $avatar = imagecreatetruecolor($size, $size);  
+    //make and fill the BG color
+    $bg_color = imagecolorallocate($avatar, $RGB['red'], $RGB['green'], $RGB['blue']);
+    imagefill( $avatar, 0, 0, $bg_color );
+    //white text
+    $avatar_text_color = imagecolorallocate($avatar, 255, 255, 255);
+// Load the gd font and write 
+    $font = imageloadfont('gd-files/gd-font.gdf');
+    imagestring($avatar, $font, 10, 10, $string, $avatar_text_color);
+
+    imagepng($avatar, $imageFilePath);
+
+    imagedestroy($avatar);
+
+    return $imageFilePath;
+}
+
+
+/*
+*  Converts HSV to RGB values
+*  Input:     Hue        (H) Integer 0-360
+*             Saturation (S) Integer 0-100
+*             Lightness  (V) Integer 0-100
+*  Output:    Array red, green, blue
+*/
+
+function get_RGB($iH, $iS, $iV) {
+    if($iH < 0)   $iH = 0;   // Hue:
+    if($iH > 360) $iH = 360; //   0-360
+    if($iS < 0)   $iS = 0;   // Saturation:
+    if($iS > 100) $iS = 100; //   0-100
+    if($iV < 0)   $iV = 0;   // Lightness:
+    if($iV > 100) $iV = 100; //   0-100
+
+    $dS = $iS/100.0; // Saturation: 0.0-1.0
+    $dV = $iV/100.0; // Lightness:  0.0-1.0
+    $dC = $dV*$dS;   // Chroma:     0.0-1.0
+    $dH = $iH/60.0;  // H-Prime:    0.0-6.0
+    $dT = $dH;       // Temp variable
+
+    while($dT >= 2.0) $dT -= 2.0; // php modulus does not work with float
+    $dX = $dC*(1-abs($dT-1));     // as used in the Wikipedia link
+
+    switch(floor($dH)) {
+        case 0:
+        $dR = $dC; $dG = $dX; $dB = 0.0; break;
+        case 1:
+        $dR = $dX; $dG = $dC; $dB = 0.0; break;
+        case 2:
+        $dR = 0.0; $dG = $dC; $dB = $dX; break;
+        case 3:
+        $dR = 0.0; $dG = $dX; $dB = $dC; break;
+        case 4:
+        $dR = $dX; $dG = 0.0; $dB = $dC; break;
+        case 5:
+        $dR = $dC; $dG = 0.0; $dB = $dX; break;
+        default:
+        $dR = 0.0; $dG = 0.0; $dB = 0.0; break;
+    }
+
+    $dM  = $dV - $dC;
+    $dR += $dM; $dG += $dM; $dB += $dM;
+    $dR *= 255; $dG *= 255; $dB *= 255;
+
+    return  array(
+        'red' =>  round($dR),
+        'green'=> round($dG),
+        'blue' => round($dB)
+    );
 }
 //no close php

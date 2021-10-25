@@ -68,16 +68,20 @@ if(isset($_POST['did_register'])){
 	
 	//if valid, add the new user to the DB
 	if( $valid ){
+		//generate an avatar
+		$letter = $username[0];
+		$avatar = make_letter_avatar($letter, 60);
 		$result = $DB->prepare('INSERT INTO users
-								(username, email, password, is_admin)
+								(username, email, password, profile_pic, is_admin)
 								VALUES 
-								(:username, :email, :password, 0)');
+								(:username, :email, :password, :image, 0)');
 		//make a salted, hashed password 
 		$hashed_pass = password_hash( $password, PASSWORD_DEFAULT );
 		$data = array(
 				'username' => $username,
 				'email' => $email,
 				'password' => $hashed_pass,
+				'image'	=> $avatar,
 				);
 		$result->execute( $data );
 		//check if one row was added
