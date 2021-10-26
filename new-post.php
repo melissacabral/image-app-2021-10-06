@@ -8,8 +8,23 @@ if( ! $logged_in_user ){
 }
 ?>
 	<main class="content">
+		<?php require( 'includes/new-post-parse.php' ); ?>
+
 		<h2>Add New Post</h2>
-		<p>If you can see this page, you must be logged in</p>
+
+		<?php show_feedback( $feedback, $feedback_class, $errors ); ?>
+
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" 
+			enctype="multipart/form-data">
+			<label>Upload a .jpg, .gif or .png</label>
+
+			<input type="file" name="uploadedfile" accept="image/*" required>
+
+			<input type="submit" value="Next: Add Post Details &rarr;">
+
+			<input type="hidden" name="did_upload" value="1">
+			
+		</form>
 	</main>
 <?php 
 require('includes/sidebar.php'); 

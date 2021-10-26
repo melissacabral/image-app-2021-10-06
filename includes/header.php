@@ -34,7 +34,7 @@ $logged_in_user = check_login();
 				<li><a href="login.php">Log In</a></li>
 			<?php }else{ ?>
 				<!-- logged in menu -->
-				<li><a href="#">Add New Post</a></li>
+				<li><a href="new-post.php">&plus; New Post</a></li>
 				<li><a href="#"><?php echo $logged_in_user['username']; ?>'s Account</a></li>
 				<li><a href="login.php?action=logout">Log Out</a></li>
 			<?php } ?>

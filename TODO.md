@@ -1,6 +1,9 @@
 TODO
 ----
 
+* Build the edit-post form (step 2)
+* build a function to display post images at any size
+* delete old post data with placeholder image
 
 
 DONE
@@ -26,3 +29,4 @@ DONE
 * Add Login and parse
 * Add login authentication to certain features (commenting, new post etc)
 * Add log out feature
+* Build the add-new-post uploader (step 1)
