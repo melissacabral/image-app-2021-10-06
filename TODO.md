@@ -1,11 +1,8 @@
 TODO
 ----
+* build the users' profile pages
 
 
-* build a function to display post images at any size
-* delete old post data with placeholder image
-* Add an "edit" button to only  the logged in user's posts
-* make the dropdown stick on the categories
 
 
 DONE
@@ -33,3 +30,7 @@ DONE
 * Add log out feature
 * Build the add-new-post uploader (step 1)
 * Build the edit-post form (step 2)
+* build a function to display post images at any size
+* delete old post data with placeholder image
+* Add an "edit" button to only  the logged in user's posts
+* make the dropdown stick on the categories

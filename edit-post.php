@@ -33,7 +33,8 @@ $post_id = filter_var( $_GET['post_id'], FILTER_SANITIZE_NUMBER_INT );
 			<label>Category</label>
 			<select name="category_id">
 				<?php while( $row = $result->fetch() ){ ?>
-				<option value="<?php echo $row['category_id']; ?>">
+				<option value="<?php echo $row['category_id']; ?>" <?php 
+						selected( $category_id, $row['category_id'] ); ?>>
 					<?php echo $row['name']; ?>
 				</option>
 				<?php } ?>

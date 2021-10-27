@@ -6,7 +6,7 @@ require('includes/header.php');
 	<main class="content">
 		<?php 
 		//1. Write it. get all published posts, newest first
-		$result = $DB->prepare('SELECT posts.post_id, posts.image, posts.title, posts.body, posts.date, users.username, users.profile_pic, categories.name
+		$result = $DB->prepare('SELECT posts.post_id, posts.image, posts.title, posts.body, posts.date, users.username, users.profile_pic, users.user_id, categories.name
 								FROM posts, users, categories
 								WHERE posts.is_published = 1
 								AND users.user_id = posts.user_id
@@ -22,8 +22,18 @@ require('includes/header.php');
 		?>
 		<div class="one-post">
 			<a href="single.php?post_id=<?php echo $row['post_id']; ?>">
-				<img src="<?php echo $row['image']; ?>">
+				<?php show_post_image( $row['image'] ) ?>
 			</a>
+
+			<?php 
+			//show this button if the logged in viewer is the author
+			if( $logged_in_user['user_id'] == $row['user_id'] ){ ?>
+			<br>
+			<a href="edit-post.php?post_id=<?php echo $row['post_id']; ?>" 
+				class="button button-outline">Edit</a>
+			<?php } ?>
+
+
 			<span class="author">
 				<?php show_profile_pic( $row['profile_pic'] ); ?>
 				<?php echo $row['username']; ?>

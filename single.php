@@ -36,7 +36,7 @@ require('includes/comment-parse.php');
 			while( $row = $result->fetch() ){
 		?>
 		<div class="one-post">
-			<img src="<?php echo $row['image']; ?>">
+			<?php show_post_image( $row['image'] ) ?>
 
 			<span class="author">
 				<?php show_profile_pic( $row['profile_pic'] ); ?>
