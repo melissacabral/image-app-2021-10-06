@@ -107,8 +107,9 @@ if( isset($_POST['did_upload']) ){
 			//if it worked, move them to step 2 (edit-post.php)
 			if( $result->rowCount() >= 1 ){
 				//success!
-				$feedback = 'Success! Your post has been saved as a draft';
-				$feedback_class = 'success';
+				//get the post_id that was just added to the database
+				$post_id = $DB->lastInsertId();
+				header("Location:edit-post.php?post_id=$post_id");
 			}else{
 				//error
 				$feedback = 'Your post could not be saved in the Database.';
