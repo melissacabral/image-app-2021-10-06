@@ -200,7 +200,6 @@ function make_letter_avatar($string, $size){
 *             Lightness  (V) Integer 0-100
 *  Output:    Array red, green, blue
 */
-
 function get_RGB($iH, $iS, $iV) {
     if($iH < 0)   $iH = 0;   // Hue:
     if($iH > 360) $iH = 360; //   0-360
@@ -244,5 +243,10 @@ function get_RGB($iH, $iS, $iV) {
         'green'=> round($dG),
         'blue' => round($dB)
     );
+}
+
+// Show any post image at any size
+function show_post_image( $image, $size = 'large' ){
+    echo '<img src="uploads/' . $image . '_' . $size . '.jpg">';
 }
 //no close php

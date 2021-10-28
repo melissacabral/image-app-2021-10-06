@@ -27,7 +27,7 @@ require('includes/header.php');
 
 			<?php 
 			//show this button if the logged in viewer is the author
-			if( $logged_in_user['user_id'] == $row['user_id'] ){ ?>
+			if( $logged_in_user AND $logged_in_user['user_id'] == $row['user_id'] ){ ?>
 			<br>
 			<a href="edit-post.php?post_id=<?php echo $row['post_id']; ?>" 
 				class="button button-outline">Edit</a>

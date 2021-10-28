@@ -1,7 +1,8 @@
 TODO
 ----
-* build the users' profile pages
 
+* Add "likes"
+* add "follows"
 
 
 
@@ -34,3 +35,4 @@ DONE
 * delete old post data with placeholder image
 * Add an "edit" button to only  the logged in user's posts
 * make the dropdown stick on the categories
+* build the users' profile pages
