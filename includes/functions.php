@@ -249,4 +249,111 @@ function get_RGB($iH, $iS, $iV) {
 function show_post_image( $image, $size = 'large' ){
     echo '<img src="uploads/' . $image . '_' . $size . '.jpg">';
 }
+
+
+//Count the number of unique likes on any post
+function count_likes( $post_id = 0 ){
+    global $DB;
+    $result = $DB->prepare('SELECT COUNT(DISTINCT user_id) AS total
+                            FROM  likes
+                            WHERE post_id = ?');
+    $result->execute(array( $post_id ));
+    $row = $result->fetch();
+    return $row['total'];
+}
+//
+function like_interface( $post_id = 0, &$user_id = 0 ){
+    //does the logged in user like this post?
+    global $DB;
+    $result = $DB->prepare('SELECT * FROM LIKES 
+                            WHERE user_id = :user_id
+                            AND post_id = :post_id
+                            LIMIT 1');
+    $result->execute( array(
+        'user_id' => $user_id,
+        'post_id' => $post_id,
+    ) );
+    if($result->rowCount() >= 1){
+        $class='you-like';
+    }else{
+        $class='not-liked';
+    }
+    if($user_id < 1){
+        $class='not-logged-in';
+    }
+    ?>
+    <span class="like-interface">
+        <span class="<?php echo $class; ?>">
+            <span class="heart-button" data-postid="<?php echo $post_id; ?>">❤</span>
+            <?php echo count_likes( $post_id ); ?>
+        </span>   
+    </span>
+    <?php
+}
+
+
+/**
+ * Count the number of followers a user has
+ */
+function count_followers( $user_id ){
+    global $DB;
+    $result = $DB->prepare("SELECT COUNT(*) AS total
+                            FROM follows
+                            WHERE followee_id = ?");
+    $result->execute(array($user_id));
+    $row = $result->fetch();
+
+    echo $row['total'] == 1 ? '1 Follower' : $row['total'] . ' Followers';
+}
+/**
+ * Count the number of accounts a user follows
+ */
+function count_following( $user_id ){
+    global $DB;
+    $result = $DB->prepare("SELECT COUNT(*) AS total
+                            FROM follows
+                            WHERE follower_id = ?");
+    $result->execute(array($user_id));
+    $row = $result->fetch();
+
+    echo $row['total'] . ' Following';
+}
+/**
+ * Display all info about a user's followers
+ * @param  int $user_id the profile we're viewing
+ * @return mixed HTML
+ */
+function follows_interface( $followee, $follower ){
+    global $DB;
+    //if viewer is logged in
+    if($follower){
+        //are they already following this account?
+        $result = $DB->prepare("SELECT * FROM follows 
+                                WHERE followee_id = ?
+                                AND follower_id = ?
+                                LIMIT 1");
+        $result->execute(array( $followee, $follower ));
+        if($result->rowCount() >= 1){
+            //the viewer follows them
+            $class = 'button-outline';
+            $label = 'Unfollow';
+        }else{
+            //the viewer doesn't follow them yet
+            $class = 'button';
+            $label = 'Follow';
+        }
+    }
+   
+    ?>
+    <div class="item"><?php count_followers( $followee ); ?></div>
+    <div class="item"><?php count_following( $followee ); ?></div>
+    <?php if( $follower AND $followee != $follower ){ ?>
+    <div class="item">
+        <button class="follow-button <?php echo $class; ?>" data-followee="<?php echo $followee; ?>">
+            <?php echo $label; ?>
+        </button>
+    </div>
+    <?php } 
+}
+
 //no close php

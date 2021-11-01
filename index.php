@@ -33,6 +33,10 @@ require('includes/header.php');
 				class="button button-outline">Edit</a>
 			<?php } ?>
 
+			<div class="likes">
+				<?php like_interface( $row['post_id'], $logged_in_user['user_id'] ); ?>
+			</div>
+
 
 			<span class="author">
 				<?php show_profile_pic( $row['profile_pic'] ); ?>
