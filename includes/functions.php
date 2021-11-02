@@ -51,11 +51,11 @@ function count_comments( $id = 0 ){
     //check it
     if( $result->rowCount() >= 1 ){
          //loop it
-       while( $row = $result->fetch() ){
+     while( $row = $result->fetch() ){
              //return the count
-           echo $row['total'];
-       }       
-   }   
+         echo $row['total'];
+     }       
+ }   
 } //end function
 
 //display the user's profile pic with a default fallback
@@ -140,19 +140,19 @@ function check_login(){
     if( isset($_SESSION['access_token']) AND isset($_SESSION['user_id']) ){
         //check to see if these keys match the DB     
 
-     $data = array(
+       $data = array(
         'id' => $_SESSION['user_id'],
         'access_token' =>$_SESSION['access_token'],
     );
 
-     $result = $DB->prepare(
+       $result = $DB->prepare(
         "SELECT * FROM users
         WHERE user_id = :id
         AND access_token = :access_token
         LIMIT 1");
-     $result->execute( $data );
+       $result->execute( $data );
 
-     if($result){
+       if($result){
             //success! return all the info about the logged in user
         return $result->fetch();
     }else{
@@ -255,8 +255,8 @@ function show_post_image( $image, $size = 'large' ){
 function count_likes( $post_id = 0 ){
     global $DB;
     $result = $DB->prepare('SELECT COUNT(DISTINCT user_id) AS total
-                            FROM  likes
-                            WHERE post_id = ?');
+        FROM  likes
+        WHERE post_id = ?');
     $result->execute(array( $post_id ));
     $row = $result->fetch();
     return $row['total'];
@@ -266,9 +266,9 @@ function like_interface( $post_id = 0, &$user_id = 0 ){
     //does the logged in user like this post?
     global $DB;
     $result = $DB->prepare('SELECT * FROM LIKES 
-                            WHERE user_id = :user_id
-                            AND post_id = :post_id
-                            LIMIT 1');
+        WHERE user_id = :user_id
+        AND post_id = :post_id
+        LIMIT 1');
     $result->execute( array(
         'user_id' => $user_id,
         'post_id' => $post_id,
@@ -298,8 +298,8 @@ function like_interface( $post_id = 0, &$user_id = 0 ){
 function count_followers( $user_id ){
     global $DB;
     $result = $DB->prepare("SELECT COUNT(*) AS total
-                            FROM follows
-                            WHERE followee_id = ?");
+        FROM follows
+        WHERE followee_id = ?");
     $result->execute(array($user_id));
     $row = $result->fetch();
 
@@ -311,8 +311,8 @@ function count_followers( $user_id ){
 function count_following( $user_id ){
     global $DB;
     $result = $DB->prepare("SELECT COUNT(*) AS total
-                            FROM follows
-                            WHERE follower_id = ?");
+        FROM follows
+        WHERE follower_id = ?");
     $result->execute(array($user_id));
     $row = $result->fetch();
 
@@ -329,9 +329,9 @@ function follows_interface( $followee, $follower ){
     if($follower){
         //are they already following this account?
         $result = $DB->prepare("SELECT * FROM follows 
-                                WHERE followee_id = ?
-                                AND follower_id = ?
-                                LIMIT 1");
+            WHERE followee_id = ?
+            AND follower_id = ?
+            LIMIT 1");
         $result->execute(array( $followee, $follower ));
         if($result->rowCount() >= 1){
             //the viewer follows them
@@ -343,17 +343,101 @@ function follows_interface( $followee, $follower ){
             $label = 'Follow';
         }
     }
-   
+
     ?>
     <div class="item"><?php count_followers( $followee ); ?></div>
     <div class="item"><?php count_following( $followee ); ?></div>
     <?php if( $follower AND $followee != $follower ){ ?>
-    <div class="item">
-        <button class="follow-button <?php echo $class; ?>" data-followee="<?php echo $followee; ?>">
-            <?php echo $label; ?>
-        </button>
-    </div>
+        <div class="item">
+            <button class="follow-button <?php echo $class; ?>" data-followee="<?php echo $followee; ?>">
+                <?php echo $label; ?>
+            </button>
+        </div>
     <?php } 
 }
+/**
+ * Rating Additions
+ */
 
+/**
+ * Show the stars
+ * Display both the current average rating of a post and the interface to add a new rating
+ * @param  int $post_id 
+ * @return HTML star inputs and outputs
+ */
+function rating_interface($post_id = 0, &$user_id = 0){
+    rating_output($post_id); 
+    rating_inputs($post_id, $user_id); 
+}
+/**
+ * Get the current average rating of any post
+ * @param  int $post_id 
+ * @return float - average rating as a decimal like 3.058
+ */
+function get_rating( $post_id = 0 ){
+    global $DB;
+    //calculate the average rating
+    $result= $DB->prepare("SELECT AVG(rating) AS average FROM ratings WHERE post_id = ?");
+    $result->execute(array($post_id));
+    $row = $result->fetch();
+    return $row['average'];
+}
+/**
+ * Display radio button inputs if logged in and user hasn't rated yet
+ * @param  integer $post_id  
+ * @param  integer &$user_id the user who may or may not have rated it yet
+ * @return HTML  a form with radio button inputs
+ */
+function rating_inputs($post_id = 0, &$user_id = 0){
+    global $DB;
+    // only if logged in 
+    if( isset($user_id) AND $user_id!= 0 ){
+    //check if this user has already rated
+        $result = $DB->prepare('SELECT * from ratings 
+            WHERE user_id = ? 
+            AND post_id = ?');
+        $result->execute(array($user_id, $post_id));
+
+        if($result->rowCount() < 1){
+        ?>
+            <form action="#" method="post">
+                <label>Rate this:</label>
+                <div class="star-rating">
+                    <!--    data-id is the primary key for the post (post_id = 1)    -->
+                    <input type="radio" name="rating" value="1" data-id="<?php echo $post_id; ?>"><i></i>
+                    <input type="radio" name="rating" value="2" data-id="<?php echo $post_id; ?>"><i></i>
+                    <input type="radio" name="rating" value="3" data-id="<?php echo $post_id; ?>"><i></i>
+                    <input type="radio" name="rating" value="4" data-id="<?php echo $post_id; ?>"><i></i>
+                    <input type="radio" name="rating" value="5" data-id="<?php echo $post_id; ?>"><i></i>
+                </div>
+            </form>
+            <?php
+        }//end if user haven't rated yet
+        else{
+            $row = $result->fetch();
+            $rating = $row['rating'];
+            echo '<br>you already rated this '. $rating;
+        }
+    }//end if logged in
+    else{
+        echo 'not logged in';
+    }
+}
+/**
+ * Display the current average rating as stars
+ * @param  int $post_id 
+ * @return HTML output stars
+ */
+function rating_output( $post_id ){
+    $avg = get_rating($post_id);
+    ?>
+    <div class="star-rating star-rating-output rating-<?php echo round($avg); ?>">
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+    </div>
+ <?php
+}
 //no close php
