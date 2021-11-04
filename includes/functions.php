@@ -51,11 +51,11 @@ function count_comments( $id = 0 ){
     //check it
     if( $result->rowCount() >= 1 ){
          //loop it
-     while( $row = $result->fetch() ){
+       while( $row = $result->fetch() ){
              //return the count
-         echo $row['total'];
-     }       
- }   
+           echo $row['total'];
+       }       
+   }   
 } //end function
 
 //display the user's profile pic with a default fallback
@@ -140,19 +140,19 @@ function check_login(){
     if( isset($_SESSION['access_token']) AND isset($_SESSION['user_id']) ){
         //check to see if these keys match the DB     
 
-       $data = array(
+     $data = array(
         'id' => $_SESSION['user_id'],
         'access_token' =>$_SESSION['access_token'],
     );
 
-       $result = $DB->prepare(
+     $result = $DB->prepare(
         "SELECT * FROM users
         WHERE user_id = :id
         AND access_token = :access_token
         LIMIT 1");
-       $result->execute( $data );
+     $result->execute( $data );
 
-       if($result){
+     if($result){
             //success! return all the info about the logged in user
         return $result->fetch();
     }else{
@@ -399,7 +399,7 @@ function rating_inputs($post_id = 0, &$user_id = 0){
         $result->execute(array($user_id, $post_id));
 
         if($result->rowCount() < 1){
-        ?>
+            ?>
             <form action="#" method="post">
                 <label>Rate this:</label>
                 <div class="star-rating">
@@ -438,6 +438,93 @@ function rating_output( $post_id ){
         <i></i>
         <i></i>
     </div>
- <?php
+    <?php
+}
+/**
+ * Display the HTML output of your friends list and your pending friend requests
+ * @param  integer $user_id 
+ * @return HTML interface for the friends-list page and similar pages
+ */
+function show_friends( $user_id = 0 ){
+     global $DB;
+    $friends = array();
+    $pendings = array();
+   
+    $result = $DB->prepare("SELECT  u.user_id, u.username, u.profile_pic,        
+        case when b.friender_id is null then 
+        'pending'
+        else
+            'friends'
+        end as status
+        FROM friends f 
+        INNER JOIN users u  
+        ON u.user_id = f.friender_id
+        LEFT JOIN friends b  
+        ON b.friender_id = f.friendee_id 
+        AND  b.friendee_id = u.user_id
+        WHERE  f.friendee_id = ?
+        ");
+
+        //run it
+    $result->execute( array( $user_id ) );
+        //check it
+    if( $result->rowCount() >= 1 ){
+      while( $row = $result->fetch() ){
+                //add the found user to the correct array
+        if($row['status'] == 'friends'){
+            $friends[] = $row;
+        }else{
+            $pendings[] = $row;
+        }
+    } 
+
+        //FRIENDS LIST DISPLAY 
+    if(! empty($friends)){
+        ?>
+        <section class="added-friends">
+            <h1>Your Friends!</h1>
+            <h2>See what they're up to</h2>
+
+            <?php foreach($friends as $friend){
+                ?>
+                <div class="friend flex">
+                    <?php show_profile_pic($friend['profile_pic']) ?>
+                    <?php echo $friend['username']; ?> <button class="add-friend" data-friendee="<?php echo $friend['user_id'] ?>">Remove</button>
+                </div>
+                <?php
+            } ?>
+
+        </section><!-- friends -->
+        <?php 
+         } //end of friends list
+
+         //PENDING DISPLAY     
+         if(! empty($pendings)){
+            ?>
+
+            <section class="pending-friends">
+                <h2>Pending Friend Requests</h2>
+
+                <?php foreach($pendings as $pending){
+                    ?>
+                    <div class="pending-friend flex">
+                        <?php show_profile_pic($pending['profile_pic']) ?>
+                        <?php echo $pending['username']; ?>
+                       
+                        <button class="add-friend" data-friendee="<?php echo $pending['user_id'] ?>">Accept</button>
+                       
+                        <!-- TODO: make this work -->
+                        <button class="deny-friend button-outline">&times; Deny</button>
+                    </div>
+                    <?php
+                } ?>
+
+            </section>
+            <?php 
+         } //end of friends list
+     }else{
+        echo '<h2>You Have No Friends :(</h2>';
+    }
+
 }
 //no close php
